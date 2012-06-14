@@ -4,6 +4,9 @@ import android.app.Activity;
 import android.content.Context;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.View.OnTouchListener;
 
 public class OpenGLESTutorialActivity extends Activity 
 {
@@ -20,9 +23,9 @@ public class OpenGLESTutorialActivity extends Activity
         setContentView(mGLView);
     }
 }
-class HelloWorldGLSurfaceView extends GLSurfaceView
+class HelloWorldGLSurfaceView extends GLSurfaceView implements OnTouchListener
 {
-
+	HelloWorldRenderer mRenderer;
 	/**
 	 * @param context
 	 */
@@ -34,7 +37,19 @@ class HelloWorldGLSurfaceView extends GLSurfaceView
 		setEGLContextClientVersion(2);
 		
 		/* Setting the renderer for the SurfaceView */
-		setRenderer(new HelloWorldRenderer());
+		mRenderer = new HelloWorldRenderer();
+		setRenderer(mRenderer);
+		setOnTouchListener(this);
+	}
+
+	@Override
+	public boolean onTouch(View v, MotionEvent event)
+	{
+		float startX = event.getX();
+		float startY = event.getY();
+		
+		mRenderer.setFrustum((int) (startY - startX));
+		return true;
 	}
 	
 }

@@ -43,7 +43,8 @@ public class HelloWorldRenderer implements GLSurfaceView.Renderer
 
 	private int mProgram;
 	private int maPositionHandle;
-
+	private float ratio;
+	
 	private int muMVPMatrixHandle;
 	private float[] mMVPMatrix = new float[16];
 	private float[] mMMatrix = new float[16];
@@ -63,6 +64,7 @@ public class HelloWorldRenderer implements GLSurfaceView.Renderer
 		// Create a rotation for the triangle
         long time = SystemClock.uptimeMillis() % 4000L;
         float angle = 0.090f * ((int) time);
+        
         Matrix.setRotateM(mMMatrix, 0, angle, 0, 0, 1.0f);
         Matrix.multiplyMM(mMVPMatrix, 0, mVMatrix, 0, mMMatrix, 0);
         Matrix.multiplyMM(mMVPMatrix, 0, mProjMatrix, 0, mMVPMatrix, 0);
@@ -74,18 +76,18 @@ public class HelloWorldRenderer implements GLSurfaceView.Renderer
 		//GLES20.glUniformMatrix4fv(muMVPMatrixHandle, 1, false, mMVPMatrix, 0);
 		
 		// Draw the triangle
-		GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 3);
+		GLES20.glDrawArrays(GLES20.GL_LINE_STRIP, 0, 3);
 	}
 
 	public void onSurfaceChanged(GL10 gl, int width, int height)
 	{
 
 		GLES20.glViewport(0, 0, width, height);
-		float ratio = (float) width / height;
+		ratio = (float) width / height;
 
 		// this projection matrix is applied to object coodinates
 		// in the onDrawFrame() method
-		Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 7, 110);
+		Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, 10, 17);
 
 		muMVPMatrixHandle = GLES20.glGetUniformLocation(mProgram, "uMVPMatrix");
 		Matrix.setLookAtM(mVMatrix, 0, 0, 0, -10, 0f, 0f, 0f, 0f, 1.0f, 0.0f);
@@ -119,14 +121,20 @@ public class HelloWorldRenderer implements GLSurfaceView.Renderer
 		maPositionHandle = GLES20.glGetAttribLocation(mProgram, "vPosition");
 
 	}
-
+	public void setFrustum(int a)
+	{
+		if(a > 0)
+		{
+			Matrix.frustumM(mProjMatrix, 0, -ratio, ratio, -1, 1, a, 17);
+		}
+	}
 	public void initializeVertices()
 	{
 		/* Defining the triangle coordinates */
 		float triangleCoords[] =
 		{
 				// X, Y, Z
-				-0.5f, -0.25f, 0, 0.5f, -0.25f, 0, 0.0f, 0.559016994f, 0 };
+				-0.5f, -0.25f, 0, 0.5f, -0.25f, 0, 0.0f, 0.559016994f, 0};//, -0.5f, -0.5f, 0 };
 
 		/*
 		 * Creating a byte buffer that contains information as to how to
